@@ -13,12 +13,13 @@ You can find the original Theano implementation <a href='https://github.com/dong
 
 ## Dependencies
 
-nn
-dataload
-optim
-dpnn
-sys
-nninit
+The code is written for Torch7. The following packages are required: <br>
+nn<br>
+dataload<br>
+optim<br>
+dpnn<br>
+sys<br>
+nninit<br>
 
 ## How to 
 
