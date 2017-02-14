@@ -3,11 +3,10 @@
 I give a torch implementation of difference target propagation.
 The motivation is approximating backpropagation without depending
 on differentiability of activation function or propagating the global error.
-
-Author: Alireza Goudarzi
-Email: alireza.goudarzi@riken.jp
-copyright 2017, allrights reserved. 
-
+<br>
+Author: Alireza Goudarzi <br>
+Email: alireza.goudarzi@riken.jp <br>
+<br>
 
 You can find the original Theano implementation <a href='https://github.com/donghyunlee/dtp'>here</a>.
 
