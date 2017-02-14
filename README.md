@@ -54,3 +54,9 @@ Using 50,000 MNIST examples to train and 10,000 to test the performance.
 <img src='result_loss.png'>
 <br>
 <img src='result_acc.png'>
+
+## Comparing with original Theano implementation of DTP
+
+To directly compare the results of Torch vs. Theano implementations you can turn momentum off on Theano implementation. You need to use the original learning rates in Torch but use no loss normalization for MSE criterion and manually do batchsize normalization for NLL criterion in Toch. Thea means you have to divide the result of the forward and backward calls to NLL by the batchsize. Here is a comparison between Theano and Torch implementations under these conditions showing similar convergence rates. The data is the test error rate on MNIST dataset. (50K examples to train, 10K to test). 
+
+<img src='torch_theano_dtp_result_error.png'>
