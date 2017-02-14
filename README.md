@@ -9,6 +9,7 @@ Email: alireza.goudarzi@riken.jp <br>
 <br>
 
 You can find the original Theano implementation <a href='https://github.com/donghyunlee/dtp'>here</a>.
+You can find the arxiv paper <a href='https://arxiv.org/abs/1412.7525'>here</a>.
 
 
 ## Dependencies
