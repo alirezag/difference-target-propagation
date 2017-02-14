@@ -1,4 +1,4 @@
-# difference-target-propagation
+# Difference Target Propagation
 
 I give a torch implementation of difference target propagation.
 The motivation is approximating backpropagation without depending
