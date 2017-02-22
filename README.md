@@ -20,7 +20,7 @@ dataload<br>
 optim<br>
 dpnn<br>
 sys<br>
-nninit<br>
+
 
 ## How to 
 
@@ -38,11 +38,7 @@ generate plots:
 
 ## Notes
 
-Loss normalization between Theano's original code and Torch packages are different and therefore the 
-convergence of the model in Theano and Torch is different even when using identical metaparameters. 
-
-I experimentally discovered that if I disable normalization in Torch and divide learning rates by 3 
-I get similar convergence speed to Theano implementation. 
+Loss normalization in torch normalizes by batchsize and dimentions. To get identical results you need to turn off normalization and divide the loss by batchsize manually. You need to use the centered version of rmsprop to match original Theano results. optim.rmsprop doesn't offer this option so I extended it. The code is included here as a function. 
 
 No momentum is used in the optimization. In each epoch, first the inverse model is trained on the entire
 dataset and then the forward model is trained (as in the original implementation).
@@ -55,8 +51,4 @@ Using 50,000 MNIST examples to train and 10,000 to test the performance.
 <br>
 <img src='result_acc.png'>
 
-## Comparing with original Theano implementation of DTP
 
-To directly compare the results of Torch vs. Theano implementations you can turn momentum off on Theano implementation. You need to use the original learning rates in Torch but use no loss normalization for MSE criterion and manually do batchsize normalization for NLL criterion in Toch. Thea means you have to divide the result of the forward and backward calls to NLL by the batchsize. Here is a comparison between Theano and Torch implementations under these conditions showing similar convergence rates. The data is the test error rate on MNIST dataset. (50K examples to train, 10K to test). 
-
-<img src='torch_theano_dtp_result_error2.png'>
