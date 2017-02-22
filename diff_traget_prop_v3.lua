@@ -76,7 +76,6 @@ require "dpnn" -- needed for nn.Convert
 require "sys"
 dofile('rmsprop.lua');
 dofile('init_matrix.lua');
-nninit = require 'nninit'
 -- get options
 cmd = torch.CmdLine();
 cmd:text('Train simple network GPU benchmarking...');
