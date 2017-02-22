@@ -12,6 +12,13 @@ copyright 2017, allrights reserved.
 
 log -
 
+
+22feb2017- 
+adding orthogonalization similar to theano code. 
+
+22feb2017- 
+adding rmsprop with variance normalization. 
+
 7feb2017-
 
 the program here is completely flawed. I have to start from the scratch and see how to make it right. continue in Dev/7feb2017
@@ -67,8 +74,9 @@ dl = require "dataload"
 require "optim"
 require "dpnn" -- needed for nn.Convert
 require "sys"
+dofile('rmsprop.lua');
+dofile('init_matrix.lua');
 nninit = require 'nninit'
---nninit = dofile('/Users/alireza/torch_apps/nninit/nninit.lua');
 -- get options
 cmd = torch.CmdLine();
 cmd:text('Train simple network GPU benchmarking...');
@@ -79,16 +87,13 @@ params = cmd:parse(arg)
 print(params)
 
 
-
-trainset = torch.load('../20jan2017/trainset_5000.t7'); -- load small dataset
-testset = torch.load('../20jan2017/testset_5000.t7'); -- load small dataset
---trainset, testset = dl.loadMNIST();
+trainset, testset = dl.loadMNIST();
 
 
 --define global parameters
 maxEpoch = 100;
-epochsize = 5000; batchsize = 100;
-invNoiseSD=.3; --from the dtp file
+epochsize = 50000; batchsize = 100;
+invNoiseSD=0.359829566008; --from the dtp file
 
 --define main network parameters
  inputsize = 28*28; outputsize = 10;
@@ -98,17 +103,12 @@ invNoiseSD=.3; --from the dtp file
 for i=2,L+1 do
 Lsize[i] = hiddensize;
 end
- fLR = 0.0148893490317/3;
- fEpochs=1; -- dtp paper rate 0.0148893490317
+ fLR = 0.0148893490317;
 
 dofile('define_forward_model.lua');
 
--- model depth
---M = table.getn(f.modules);
-
 --define the inverse network parameters
-gLR = 0.00501149118237/3;
-gEpochs = 1;
+gLR = 0.00501149118237;
 cRate = 0.327736332653;
 
 dofile('define_inverse_model.lua');
@@ -140,7 +140,7 @@ if params.gpu>0 then
     end
 
 	-- get new model params
-	for i=2,L+1 do
+	for i=2,L+2 do
 	  fparams, fparams_g = allFnets[i]:getParameters();
 	  fgradi = allFnets[i].gradInput;
 	  allFparams[i-1] = fparams; allFgrads[i-1] = fparams_g; allFgradinp[i-1] = fgradi;
@@ -158,47 +158,7 @@ if params.gpu>0 then
 end
 
 
--- first validation
---foutputs = f:forward(trainset.inputs[{{},{1},{},{}}])
-allFoutputs[1] = allFnets[1]:forward(trainset.inputs)
-        for i=1,L+1 do
-        allFoutputs[i+1] = allFnets[i+1]:forward(allFoutputs[i])
-        end
-
-
-floss = fcriterion:forward(allFoutputs[L+2],trainset.targets)
-
---foutputs = f:forward(testset.inputs[{{},{1},{},{}}])
---vloss = fcriterion:forward(foutputs, testset.targets)
-print('floss:', floss)
---flossL = torch.Tensor(101):zero()
---vlossL = torch.Tensor(101):zero()
---cnt = 1;
---flossL[cnt] = floss;
---ivlossL[cnt] = vloss;
-
-
 -- do training
 dofile('dtp_training_v4.lua');
---dofile('dtp_onlinetraining_v4.lua');
 
---print the risk
---dofile('print_risk.lua');
-
---plot 
-
---require 'gnuplot'
-
-
-function pause()
-   io.stdin:read'*l'
-end
-
---gnuplot.plot({'train loss',flossL,'with lines ls 1'},
---		{'validation loss',vlossL,'with lines red ls 1'})
---	pause()
-
--- this will let you see the plot and save it too
---gnuplot.figprint('test2.eps');
---gnuplot.plotflush()
 

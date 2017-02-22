@@ -2,6 +2,9 @@
 
 log-
 
+22feb2017: 
+
+adding centered rmsprop
 
 14feb2017:
 
@@ -83,17 +86,17 @@ function trainGnet(i)
         else
           allFoutputs_noise[i-1] = allFoutputs[i] + torch.Tensor(allFoutputs[i]:size(1),allFoutputs[i]:size(2)):normal(0,invNoiseSD);
         end
-          FallFoutputs_noise[i-1] = allFnets[i+1]:forward(allFoutputs_noise[i-1]):clone();
+          FallFoutputs_noise[i-1] = allFnets[i+1]:forward(allFoutputs_noise[i-1]);
       function g2eval(params)
              allGgrads[i-1]:zero();
              g2outputs = allGnets[i-1]:forward(FallFoutputs_noise[i-1]);
-             loss_g2 = MSECF:forward(g2outputs,allFoutputs_noise[i-1]);
-             dloss_g2 = MSECF:backward(g2outputs,allFoutputs_noise[i-1]);
+             loss_g2 = MSECF:forward(g2outputs,allFoutputs_noise[i-1])/batchsize;
+             dloss_g2 = MSECF:backward(g2outputs,allFoutputs_noise[i-1])/batchsize;
              allGnets[i-1]:backward(FallFoutputs_noise[i-1],dloss_g2)
           return loss_g2,allGgrads[i-1]
           end
 
-    optim.rmsprop(g2eval,allGparams[i-1],{learningRate=gLR, alpha  = 0.95, epsilon=0.001})
+    rmsprop(g2eval,allGparams[i-1],{learningRate=gLR, alpha  = 0.95, epsilon=0.001})
 end
 
 
@@ -101,7 +104,7 @@ end
 function calculateInverseModels(targets)
 	fcriterion:forward(allFoutputs[L+2],targets);
         allFnets[L+2]:zeroGradParameters();
-        allFest[L] = allFoutputs[L+1] - cRate*allFnets[L+2]:backward(allFoutputs[L+1],fcriterion:backward(allFoutputs[L+2],targets));
+        allFest[L] = allFoutputs[L+1] - cRate*allFnets[L+2]:backward(allFoutputs[L+1],fcriterion:backward(allFoutputs[L+2],targets)/batchsize);
     for i=L-1,1,-1 do
       allFest[i] = allFoutputs[i+1] - allGnets[i]:forward(allFoutputs[i+2]) + allGnets[i]:forward(allFest[i+1]);
     end
@@ -114,23 +117,23 @@ function trainForwardModels(targets)
         -- ########### for difference target propagation
         function f4eval(params)
            allFgrads[i-1]:zero();
-           allLoss[i-1] = fcriterion:forward(allFoutputs[i],targets);
-           dloss_f4 = fcriterion:backward(allFoutputs[i],targets);
+           allLoss[i-1] = fcriterion:forward(allFoutputs[i],targets)/batchsize;
+           dloss_f4 = fcriterion:backward(allFoutputs[i],targets)/batchsize;
            allFgradinp[i-1] = allFnets[i]:backward(allFoutputs[i-1],dloss_f4)
         return allLoss[i-1], allFgrads[i-1]
         end
-    optim.rmsprop(f4eval,allFparams[i-1],{learningRate=fLR, epsilon  = 0.95, alpha=0.001})
+    rmsprop(f4eval,allFparams[i-1],{learningRate=fLR, alpha  = 0.95, epsilon=0.001})
 
     for i=2,L+1 do
     -- ########### for difference target propagation
         function f4eval(params)
            allFgrads[i-1]:zero();
-           allLoss[i-1] = MSECF:forward(allFoutputs[i],allFest[i-1]);
-           dloss_f3 = MSECF:backward(allFoutputs[i],allFest[i-1]);
+           allLoss[i-1] = MSECF:forward(allFoutputs[i],allFest[i-1])/batchsize;
+           dloss_f3 = MSECF:backward(allFoutputs[i],allFest[i-1])/batchsize;
            allFnets[i]:backward(allFoutputs[i-1],dloss_f3)
     return allLoss[i-1], allFgrads[i-1]
         end
-        optim.rmsprop(f4eval,allFparams[i-1],{learningRate=fLR, epsilon  = 0.95, alpha=0.001})
+        rmsprop(f4eval,allFparams[i-1],{learningRate=fLR, alpha  = 0.95, epsilon=0.001})
     end
 
 end

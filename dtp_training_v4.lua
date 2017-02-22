@@ -66,7 +66,7 @@ allLoss = {}; allLossMy = {};
 for epochi = 1,maxEpoch do
 local start =sys.tic();
 
-for j,inputs, targets in trainset:sampleiter(batchsize,epochsize) do
+for j , inputs, targets in trainset:subiter(batchsize,epochsize) do
 	-- calculate forward model f
 	calculateForwardModel(inputs);
 	-- train inverse model
@@ -74,13 +74,13 @@ for j,inputs, targets in trainset:sampleiter(batchsize,epochsize) do
 end
 
 -- train forward model
-for j,inputs, targets in trainset:sampleiter(batchsize,epochsize) do
+for j,inputs, targets in trainset:subiter(batchsize,epochsize) do
     -- calculate forward model f
 	calculateForwardModel(inputs);
 	-- calculate inverse moderls g
-    calculateInverseModels(targets)
+        calculateInverseModels(targets)
 	-- train forward models
-	trainForwardModels(targets);	
+        trainForwardModels(targets);	
 end
 
 trainloss, trainVal, testloss, testVal = calculateStats();
