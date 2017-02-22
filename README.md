@@ -3,6 +3,7 @@
 I give a torch implementation of difference target propagation.
 The motivation is approximating backpropagation without depending
 on differentiability of activation function or propagating the global error.
+This implementation is generalized and you can use any number of layers and node per layer.
 <br>
 Author: Alireza Goudarzi <br>
 Email: alireza.goudarzi@riken.jp <br>
