@@ -25,15 +25,15 @@ sys<br>
 
 ## How to 
 
-run on CPU:
+To run on CPU:
 
    th diff_traget_prop_v3.lua
 
-run on GPU:
+To run on GPU:
 
    th diff_traget_prop_v3.lua -gpu 1
 
-generate plots:
+To generate plots:
 
    gnuplot gnu_script.gnu
 
