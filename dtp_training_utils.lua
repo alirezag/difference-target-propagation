@@ -96,7 +96,7 @@ function trainGnet(i)
           return loss_g2,allGgrads[i-1]
           end
 
-    rmsprop(g2eval,allGparams[i-1],{learningRate=gLR, alpha  = 0.95, epsilon=0.001})
+    rmsprop(g2eval,allGparams[i-1],{learningRate=gLR, alpha  = 0.95, epsilon=0.001},Goptstate[i-1])
 end
 
 

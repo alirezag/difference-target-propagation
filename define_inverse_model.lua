@@ -24,4 +24,5 @@ allGparams[i] = gparams;
 allGgrads[i] = gparams_g;
 allGgradinp[i] = gradi ;
 allGoutputs[i] = 0;
+Goptstate[i]={};
 end
